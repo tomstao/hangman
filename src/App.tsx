@@ -9,8 +9,9 @@ function App() {
                 <p className="text-sm" style={{color:"#8E8E8E"}}>Guess the word in under 8 attempts to keep the programming world safe from Assembly!</p>
             </div>
 
-            <div className="container flex justify-center items-center flex-col">
+            <div className="container flex justify-center items-center flex-row gap-1">
                 <Language content={"HTML"} className={"bg-orange-600"} fontColor={"#F9F4DA"} />
+                <Language content={"CSS"} className={"bg-sky-700"} fontColor={"#F9F4DA"} />
             </div>
         </>
     )
