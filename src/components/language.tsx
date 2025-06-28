@@ -3,6 +3,7 @@ interface Lan {
     className?: string;
     content: string;
     fontColor?: string;
+    id?: number;
 }
 
 
