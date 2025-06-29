@@ -28,7 +28,7 @@ export default function WordRow() {
                     (
                         {
                             ...char,
-                            display: false,
+                            display: true,
                         }
                     )
                 ))
