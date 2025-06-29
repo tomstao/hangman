@@ -12,7 +12,7 @@ export interface Hangman {
     id: string;
 }
 
-export default function WordRow() {
+export default function WordRow({ onWrongGuess }: { onWrongGuess: () => void }) {
     const alphabet = Array.from({ length: 26 }, (_, i) =>
         String.fromCharCode(97 + i)
     );
@@ -38,14 +38,24 @@ export default function WordRow() {
     //     ))
     // }
     const handleAlphalKeys = (e: React.MouseEvent<HTMLElement>) => {
-        const value = (e.currentTarget as HTMLButtonElement).value
+        const value = (e.currentTarget as HTMLButtonElement).value.toUpperCase();
+
+        let correctGuess = false;
+
         setWord(prev =>
-            prev.map(key =>
-                key.char.toUpperCase() === value.toUpperCase() ? { ...key, display: true } : key
-            )
-        )
-        console.log(word)
-    }
+            prev.map(key => {
+                if (key.char.toUpperCase() === value) {
+                    correctGuess = true;
+                    return { ...key, display: true };
+                }
+                return key;
+            })
+        );
+
+        if (!correctGuess) {
+            onWrongGuess(); // ✅ Call this from App
+        }
+    };
     const [word, setWord] = useState<Hangman[]>(hangmanProcess("loading."));
     const alphabets: Hangman[] = hangmanProcess(alphabet.join('')).map((word) => ({
         ...word,
@@ -104,7 +114,7 @@ export default function WordRow() {
 
             <section className={"w-full mx-auto "}>
 
-                <Alphabet  hangman={alphabets} />
+                <Alphabet  hangman={alphabets} onWrongGuess={onWrongGuess} />
 
             </section>
 

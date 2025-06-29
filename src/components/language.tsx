@@ -1,20 +1,21 @@
-interface Lan {
-    onClick?: () => void;
-    className?: string;
+interface LanguageProps {
     content: string;
-    fontColor?: string;
-    id?: number;
+    fontColor: string;
+    className: string;
+    id: string;
+    disable?: boolean;
+    onClick?: (id: string) => void;
 }
 
 
-export default function Language (Lan: Lan) {
-
-
+export default function Language({ content, fontColor, className, id, onClick }: LanguageProps) {
     return (
-        <>
-            <button className={`${Lan.className} rounded-sm px-1 hover:scale-110 duration-200`} style={{"color": Lan.fontColor}}>
-                {Lan.content}
-            </button>
-        </>
-    )
+        <button
+            className={`px-3 py-1 rounded-sm text-sm font-semibold ${className}`}
+            style={{ color: fontColor }}
+            onClick={() => onClick?.(id)}
+        >
+            {content}
+        </button>
+    );
 }

@@ -3,6 +3,7 @@ import type {Hangman} from "./WordRow.tsx";
 
 interface AlphabetProps {
     hangman: Hangman[]
+    onWrongGuess: () => void
 }
 
 export default function Alphabet({ hangman }: AlphabetProps) {
