@@ -3,7 +3,10 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # or 'master' if that's your default
+      - main
+
+permissions:
+  contents: write  # 👈 This is the fix
 
 jobs:
   deploy:
@@ -28,4 +31,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
           publish_dir: ./dist
