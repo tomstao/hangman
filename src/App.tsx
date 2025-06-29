@@ -1,7 +1,6 @@
 import './App.css'
 import Language from "./components/language.tsx";
 import WordRow from "./components/WordRow.tsx";
-import Alphabet from "./components/Alphabet.tsx";
 import { nanoid } from 'nanoid'
 
 interface LanData {
@@ -52,11 +51,8 @@ function App() {
             </section>
             {/*Language section*/}
 
-            <section className={"w-4/5 mx-auto"} >
             <WordRow/>
-            </section>
 
-            <Alphabet/>
         </>
     )
 }

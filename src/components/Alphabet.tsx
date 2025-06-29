@@ -1,7 +1,12 @@
 import Cell from "./Cell.tsx";
 import {nanoid} from "nanoid";
+import type {Hangman} from "./WordRow.tsx";
 
-export default function Alphabet() {
+interface AlphabetProps {
+    hangman: Hangman[]
+}
+
+export default function Alphabet({ hangman }: AlphabetProps) {
     const alphabet = Array.from({ length: 26 }, (_, i) =>
         String.fromCharCode(97 + i)
     );
@@ -11,11 +16,11 @@ export default function Alphabet() {
 
     return (
         <section className="grid grid-cols-10 p-4 gap-1 gap-x-10 w-1/2 mx-auto">
-            {alphabet.slice(0, fullRows * 10).map((letter) => (
+            {hangman.slice(0, fullRows * 10).map((hangObj) => (
                 <Cell
                     key={nanoid()}
-                    character={letter}
-                    display={true}
+                    character={hangObj.char}
+                    display={hangObj.display}
                     className= {style}
                 />
             ))}
@@ -24,11 +29,11 @@ export default function Alphabet() {
                 <div></div>
                 <div></div>
             {/*two empty div to align the alphabet*/}
-                {alphabet.slice(fullRows * 10).map((letter) => (
+                {hangman.slice(fullRows * 10).map((hangObj) => (
                     <Cell
                         key={nanoid()}
-                        character={letter}
-                        display={true}
+                        character={hangObj.char}
+                        display={hangObj.display}
                         className= {style}
                     />
 
