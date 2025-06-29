@@ -31,9 +31,9 @@ function App() {
     ] // Language data for the first row
 
     const [lan, setLanguage] = useState<LanData[]>([...dataOne]);
-    const [gamOver, setGamOver] = useState<boolean>(false);
+    const [gameOver, setGameOver] = useState<boolean>(false);
     const handleWinner = () => {
-        setGamOver(true);
+        setGameOver(true);
         setMessage({...message, content: "You win! Well done!"})
     }
 
@@ -44,7 +44,7 @@ function App() {
                 ...prev,
                 content: "Game Over! \n You lose! Better learning Assembly!",
             }));
-            setGamOver(true);
+            setGameOver(true);
             return;
         }
 
@@ -57,7 +57,7 @@ function App() {
                     i === firstEnabledIndex ? {...lang, disable: true} : lang
                 ))
             setMessage({...message, content: "Game Over! \n You lose! Better learning Assembly!"})
-            setGamOver(true);
+            setGameOver(true);
             return;
         }
         // Disable only that one
@@ -72,7 +72,7 @@ function App() {
         );
         if (firstEnabledIndex === 7) {
             setMessage({...message, content: "Game Over! \n You lose! Better learning Assembly!"})
-            setGamOver(true);
+            setGameOver(true);
             return;
         }
         setMessage({...message, content: lan[firstEnabledIndex].name})
@@ -122,7 +122,7 @@ function App() {
 
 
             <div className={"flex justify-center items-center flex-col"}>
-                { gamOver && <button className={"mx-auto bg-green-500 text-3xl px-1.5 rounded-md hover:scale-105 duration-200"}>New Game</button>}
+                { gameOver && <button className={"mx-auto bg-green-500 text-3xl px-1.5 rounded-md hover:scale-105 duration-200"}>New Game</button>}
             </div>
 
         </>
