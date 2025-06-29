@@ -3,16 +3,35 @@ import {nanoid} from "nanoid";
 import axios from 'axios'
 import {useEffect, useState} from "react";
 
+interface Hangman {
+    char: string;
+    display: boolean;
+}
 
 export default function WordRow() {
-    const [word, setWord] = useState("loading.");
+    const hangmanProcess = (word: string): Hangman[] => {
+         return Array.from(word, (c) => (
+            {
+                char: c,
+                display: true,
+            }
+        ));
+    }
+
+    const [word, setWord] = useState<Hangman[]>(hangmanProcess("loading."));
     const [error, setError] = useState<string | null>(null);
-    const [display, setDisplay] = useState(true);
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const res = await axios.get('https://random-word-api.vercel.app/api?words=1&length=8&type=uppercase')
-                setWord(res.data[0])
+                setWord(hangmanProcess(res.data[0]).map((char)=>
+                    (
+                        {
+                            ...char,
+                            display: false,
+                        }
+                    )
+                ))
                 console.log(word)
             } catch (err: unknown) {
                 if (axios.isAxiosError(err)) {
@@ -24,27 +43,28 @@ export default function WordRow() {
                 } else {
                     setError('An unknown error occurred')
                 }
-            } finally {
-                setDisplay(false);
             }
         }
 
         fetchData()
-    }, [display, word])
+    }, [])
 
     if (error) {
         console.error(error)
     }
+
     return (
         <div className="grid grid-cols-8 gap-0 p-4">
-            {Array.from(word, (v) => (
-                <Cell
-                    key={nanoid()}
-                    character={v}
-                    display={display}
-                    className={"h-12 aspect-square rounded-sm border border-amber-50 justify-center flex text-4xl font-bold text-white"}
-                />
-            ))}
+            {
+                word.map((letter) => (
+                    <Cell
+                        key={nanoid()}
+                        character={letter.char}
+                        display={letter.display}
+                        className={"h-12 aspect-square rounded-sm border border-amber-50 justify-center flex text-4xl font-bold text-white"}
+                    />
+                ))
+            }
         </div>
     );
 }
