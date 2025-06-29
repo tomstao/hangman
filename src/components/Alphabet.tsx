@@ -35,6 +35,7 @@ export default function Alphabet({ hangman }: AlphabetProps) {
                         character={hangObj.char}
                         display={hangObj.display}
                         className= {style}
+                        onClick={hangObj.onClick}
                     />
 
                 ))}
