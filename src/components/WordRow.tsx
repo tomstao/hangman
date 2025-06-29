@@ -44,6 +44,7 @@ export default function WordRow() {
                 key.char.toUpperCase() === value.toUpperCase() ? { ...key, display: true } : key
             )
         )
+        console.log(word)
     }
     const [word, setWord] = useState<Hangman[]>(hangmanProcess("loading."));
     const alphabets: Hangman[] = hangmanProcess(alphabet.join('')).map((word) => ({

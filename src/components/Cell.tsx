@@ -14,6 +14,8 @@ export default function Cell({character, className, display, onClick}: Word) {
         <button
             className={`${className}`}
             onClick={onClick}
+            value={character}
+            // We need to pass the value here, otherwise, we can't compare the character
         >
                 <span className={"m-auto"}>
                 {display && character?.toUpperCase()}
