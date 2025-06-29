@@ -6,6 +6,7 @@ export default function Alphabet() {
         String.fromCharCode(97 + i)
     );
     const style: string = "h-12 aspect-square rounded-sm border border-amber-50 justify-center flex text-4xl  bg-amber-400 text-black hover:scale-105 duration-200";
+    // Style string
     const fullRows = Math.floor(alphabet.length / 10); // 2
 
     return (
@@ -14,7 +15,7 @@ export default function Alphabet() {
                 <Cell
                     key={nanoid()}
                     character={letter}
-                    display={false}
+                    display={true}
                     className= {style}
                 />
             ))}
@@ -22,11 +23,12 @@ export default function Alphabet() {
             {/* Wrap last row letters in a nested div with col-span-10 */}
                 <div></div>
                 <div></div>
+            {/*two empty div to align the alphabet*/}
                 {alphabet.slice(fullRows * 10).map((letter) => (
                     <Cell
                         key={nanoid()}
                         character={letter}
-                        display={false}
+                        display={true}
                         className= {style}
                     />
 

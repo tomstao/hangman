@@ -8,13 +8,13 @@ interface Word {
     className?: string;
 }
 
-export default function Cell({character, className}: Word) {
+export default function Cell({character, className, display}: Word) {
     return (
         <button
             className={`${className}`}
         >
                 <span className={"m-auto"}>
-                {character?.toUpperCase()}
+                {display && character?.toUpperCase()}
                 </span>
         </button>
     );
