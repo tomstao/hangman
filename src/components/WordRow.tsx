@@ -30,7 +30,7 @@ export default function WordRow() {
         }
 
         fetchData()
-    }, [display])
+    }, [display, word])
 
     if (error) {
         console.error(error)
