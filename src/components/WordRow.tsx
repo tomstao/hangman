@@ -7,6 +7,7 @@ import Alphabet from "./Alphabet.tsx";
 export interface Hangman {
     char: string;
     display: boolean;
+    onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
 export default function WordRow() {
@@ -23,7 +24,7 @@ export default function WordRow() {
     }
 
     const [word, setWord] = useState<Hangman[]>(hangmanProcess("loading."));
-    const [alphabets, setAlphabets] = useState<Hangman[]>(hangmanProcess(alphabet.join('')));
+    const alphabets: Hangman[] = hangmanProcess(alphabet.join(''));
     const [error, setError] = useState<string | null>(null);
     useEffect(() => {
         const fetchData = async () => {
