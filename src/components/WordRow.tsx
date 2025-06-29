@@ -12,7 +12,7 @@ export interface Hangman {
     id: string;
 }
 
-export default function WordRow({ onWrongGuess }: { onWrongGuess: () => void }) {
+export default function WordRow({ onWrongGuess, onCorrectGuess }: { onWrongGuess: () => void , onCorrectGuess: () => void  }) {
     const alphabet = Array.from({ length: 26 }, (_, i) =>
         String.fromCharCode(97 + i)
     );
@@ -54,6 +54,10 @@ export default function WordRow({ onWrongGuess }: { onWrongGuess: () => void }) 
 
         if (!correctGuess) {
             onWrongGuess(); // ✅ Call this from App
+        }
+
+        if(word.every(w => w.display)) {
+            onCorrectGuess();
         }
     };
     const [word, setWord] = useState<Hangman[]>(hangmanProcess("loading."));

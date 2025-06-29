@@ -11,9 +11,13 @@ interface LanData {
     disable?: boolean;
 }
 
+interface GameData {
+    content: string;
+    style: string;
+}
 
 function App() {
-
+    const [message, setMessage] = useState<GameData>({content: "", style: ""} as GameData);
     const dataOne: LanData [] = [
         {name: "HTML", bgColor: "bg-orange-600", id: nanoid(), disable: false},
         {name: "CSS", bgColor: "bg-blue-700", id: nanoid(), disable: false},
@@ -27,21 +31,48 @@ function App() {
     ] // Language data for the first row
 
     const [lan, setLanguage] = useState<LanData[]>([...dataOne]);
+    let winner = false
+
+    const handleWinner = () => {
+        winner = true
+        setMessage({...message, content: "You win! Well done!"})
+    }
 
     const handleWrongGuess = () => {
         // Check if all languages are already disabled
-        if (lan.every(l => l.disable)) return;
+        if (lan.every(l => l.disable || l.name === "Assembly")) {
+            setMessage((prev) => ({
+                ...prev,
+                content: "Game Over! \n You lose! Better learning Assembly!",
+            }));
+        }
 
         // Find the first enabled one
         const firstEnabledIndex = lan.findIndex(l => !l.disable);
         if (firstEnabledIndex === -1) return;
-
+        if (lan[firstEnabledIndex].name === "Assembly") {
+            setLanguage(prev =>
+                prev.map((lang, i) =>
+                    i === firstEnabledIndex ? {...lang, disable: true} : lang
+                ))
+            setMessage({...message, content: "Game Over! \n You lose! Better learning Assembly!"})
+            return;
+        }
         // Disable only that one
         setLanguage(prev =>
             prev.map((lang, i) =>
-                i === firstEnabledIndex ? { ...lang, bgColor: lang.bgColor + " brightness-50", disable: true } : lang
+                i === firstEnabledIndex && lang.name !== "Assembly" ? {
+                    ...lang,
+                    bgColor: lang.bgColor + " brightness-50",
+                    disable: true
+                } : lang
             )
         );
+        if (firstEnabledIndex === 7) {
+            setMessage({...message, content: "Game Over! \n You lose! Better learning Assembly!"})
+            return;
+        }
+        setMessage({...message, content: lan[firstEnabledIndex].name})
     };
 
     return (
@@ -51,7 +82,7 @@ function App() {
                 <h1 className="font-medium text-xl" style={{color: "#F9F4DA"}}>Assembly: Endgame</h1>
                 <p className="text-sm" style={{color: "#8E8E8E"}}>Guess the word in under 8 attempts to keep the
                     programming world safe from Assembly!</p>
-                <div className={"h-20"}></div>
+                <div className={"h-15"}>{message.content}</div>
             </header>
             {/*Header text for introduction of hangman game*/}
 
@@ -84,7 +115,13 @@ function App() {
             </section>
             {/*Language section*/}
 
-            <WordRow onWrongGuess={handleWrongGuess} />
+            <WordRow onWrongGuess={handleWrongGuess} onCorrectGuess={handleWinner}/>
+
+
+            <div className={"flex justify-center items-center flex-col"}>
+                { winner && <button className={"mx-auto bg-green-500 text-3xl px-1.5 rounded-md hover:scale-105 duration-200"}>New Game</button>}
+            </div>
+
         </>
     )
 }
