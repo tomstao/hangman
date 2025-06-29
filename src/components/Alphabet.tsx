@@ -1,4 +1,5 @@
 import Cell from "./Cell.tsx";
+import {nanoid} from "nanoid";
 
 export default function Alphabet() {
     const alphabet = Array.from({ length: 26 }, (_, i) =>
@@ -9,9 +10,9 @@ export default function Alphabet() {
 
     return (
         <section className="grid grid-cols-10 p-4 gap-1 gap-x-10 w-1/2 mx-auto">
-            {alphabet.slice(0, fullRows * 10).map((letter, i) => (
+            {alphabet.slice(0, fullRows * 10).map((letter) => (
                 <Cell
-                    key={i}
+                    key={nanoid()}
                     character={letter}
                     display={false}
                     className= {style}
@@ -21,9 +22,9 @@ export default function Alphabet() {
             {/* Wrap last row letters in a nested div with col-span-10 */}
                 <div></div>
                 <div></div>
-                {alphabet.slice(fullRows * 10).map((letter, i) => (
+                {alphabet.slice(fullRows * 10).map((letter) => (
                     <Cell
-                        key={fullRows * 10 + i}
+                        key={nanoid()}
                         character={letter}
                         display={false}
                         className= {style}

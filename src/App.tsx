@@ -2,6 +2,7 @@ import './App.css'
 import Language from "./components/language.tsx";
 import WordRow from "./components/WordRow.tsx";
 import Alphabet from "./components/Alphabet.tsx";
+import { nanoid } from 'nanoid'
 
 interface LanData {
     name: string;
@@ -36,15 +37,15 @@ function App() {
 
             <section>
             <div className="container flex justify-center items-center flex-row gap-1 mx-auto">
-                {dataOne.map((item, index) => (
-                    <Language content={item.name} fontColor={"#F9F4DA"} className={item.bgColor} key={index} />
+                {dataOne.map((item) => (
+                    <Language content={item.name} fontColor={"#F9F4DA"} className={item.bgColor} key={nanoid()} />
                 ))}
             {/*Array of the first row of languages*/}
             </div>
 
             <div className="container flex justify-center items-center flex-row gap-1 mx-auto mt-2">
-                {dataTwo.map((item, index) => (
-                    <Language content={item.name} fontColor={"#F9F4DA"} className={item.bgColor} key={index} />
+                {dataTwo.map((item) => (
+                    <Language content={item.name} fontColor={"#F9F4DA"} className={item.bgColor} key={nanoid()} />
                 ))}
                 {/*Array of the second row of languages*/}
             </div>
