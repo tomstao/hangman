@@ -2,7 +2,7 @@ import Cell from "./Cell.tsx";
 import { nanoid } from "nanoid";
 import axios from "axios";
 import * as React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Alphabet from "./Alphabet.tsx";
 
 export interface Hangman {
@@ -34,62 +34,56 @@ export default function WordRow({
     }));
   };
 
+  const handleAlphalKeys = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      if (gameOver) {
+        return;
+      }
+      console.log(word);
+      const value = (e.currentTarget as HTMLButtonElement).value.toUpperCase();
+
+      let correctGuess = false;
+
+      setWord((prev) => {
+        const updatedWord = prev.map((key) => {
+          if (key.char.toUpperCase() === value) {
+            correctGuess = true;
+            return { ...key, display: true };
+          }
+          return key;
+        });
+
+        // Check win condition immediately after updating
+        const allRevealed = updatedWord.every((w) => w.display);
+        if (allRevealed) {
+          // If user won, don't call onWrongGuess
+          setTimeout(() => onCorrectGuess(), 0);
+          return updatedWord;
+        }
+
+        // Only call onWrongGuess if user didn't win
+        if (!correctGuess) {
+          setTimeout(() => onWrongGuess(), 0);
+        }
+
+        return updatedWord;
+      });
+    },
+    [gameOver, onWrongGuess, onCorrectGuess]
+  );
+
   const [word, setWord] = useState<Hangman[]>(hangmanProcess("loading."));
   const [alphabets, setAlphabets] = useState<Hangman[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const gameOverRef = useRef(gameOver);
-
-  // Update ref when gameOver changes
-  useEffect(() => {
-    gameOverRef.current = gameOver;
-  }, [gameOver]);
-
-  const handleAlphalKeys = (e: React.MouseEvent<HTMLElement>) => {
-    console.log("handleAlphalKeys called, gameOver:", gameOverRef.current);
-    if (gameOverRef.current) {
-      console.log("Game is over, returning early");
-      return;
-    }
-    console.log(word);
-    const value = (e.currentTarget as HTMLButtonElement).value.toUpperCase();
-
-    let correctGuess = false;
-
-    setWord((prev) => {
-      const updatedWord = prev.map((key) => {
-        if (key.char.toUpperCase() === value) {
-          correctGuess = true;
-          return { ...key, display: true };
-        }
-        return key;
-      });
-
-      // Check win condition immediately after updating
-      const allRevealed = updatedWord.every((w) => w.display);
-      if (allRevealed) {
-        // If user won, don't call onWrongGuess
-        setTimeout(() => onCorrectGuess(), 0);
-        return updatedWord;
-      }
-
-      // Only call onWrongGuess if user didn't win
-      if (!correctGuess) {
-        setTimeout(() => onWrongGuess(), 0);
-      }
-
-      return updatedWord;
-    });
-  };
 
   // Update alphabets when gameOver changes
   useEffect(() => {
-    console.log("Updating alphabets, gameOver:", gameOver);
     const newAlphabets = hangmanProcess(alphabet.join("")).map((word) => ({
       ...word,
       onClick: handleAlphalKeys,
     }));
     setAlphabets(newAlphabets);
-  }, [gameOver]);
+  }, [handleAlphalKeys]);
 
   const fetchNewWord = async () => {
     try {

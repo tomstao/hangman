@@ -153,9 +153,6 @@ function App() {
     setMessage({ content: "", style: "" });
     setTextBg("");
     setResetTrigger((prevTrigger) => prevTrigger + 1);
-
-    // Force a re-render by updating the key of the WordRow component
-    console.log("Game reset triggered");
   };
 
   return (
@@ -168,13 +165,11 @@ function App() {
           Guess the word in under 9 attempts to keep the programming world safe
           from Assembly!
         </p>
-        {message.content && (
-          <div
-            className={`flex justify-center items-center h-15 rounded-sm ${textBg} mt-5 px-2`}
-          >
-            <span className={" m-auto"}> {message.content}</span>
-          </div>
-        )}
+        <div
+          className={`flex justify-center items-center h-15 rounded-sm ${textBg} mt-5 px-2`}
+        >
+          <span className={" m-auto"}> {message.content}</span>
+        </div>
       </header>
       {/*Header text for introduction of hangman game*/}
 
@@ -210,7 +205,6 @@ function App() {
       {/*Language section*/}
 
       <WordRow
-        key={resetTrigger}
         onWrongGuess={handleWrongGuess}
         onCorrectGuess={handleWinner}
         gameOver={gameOver}
