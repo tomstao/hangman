@@ -50,6 +50,8 @@ function App() {
 
   const [lan, setLanguage] = useState<LanData[]>([...dataOne]);
   const [gameOver, setGameOver] = useState<boolean>(false);
+  const [resetTrigger, setResetTrigger] = useState<number>(0);
+
   const handleWinner = () => {
     if (gameOver) {
       return;
@@ -144,6 +146,18 @@ function App() {
     setGameOver(true);
   };
 
+  const resetGame = () => {
+    // Reset all game state to initial values
+    setLanguage([...dataOne]);
+    setGameOver(false);
+    setMessage({ content: "", style: "" });
+    setTextBg("");
+    setResetTrigger((prevTrigger) => prevTrigger + 1);
+
+    // Force a re-render by updating the key of the WordRow component
+    console.log("Game reset triggered");
+  };
+
   return (
     <>
       <header className="container text-center w-96 text-xl flex justify-center items-center flex-col mx-auto mb-6 pt-13">
@@ -154,11 +168,13 @@ function App() {
           Guess the word in under 9 attempts to keep the programming world safe
           from Assembly!
         </p>
-        <div
-          className={`flex justify-center items-center h-15 rounded-sm ${textBg} mt-5 px-2`}
-        >
-          <span className={" m-auto"}> {message.content}</span>
-        </div>
+        {message.content && (
+          <div
+            className={`flex justify-center items-center h-15 rounded-sm ${textBg} mt-5 px-2`}
+          >
+            <span className={" m-auto"}> {message.content}</span>
+          </div>
+        )}
       </header>
       {/*Header text for introduction of hangman game*/}
 
@@ -194,9 +210,11 @@ function App() {
       {/*Language section*/}
 
       <WordRow
+        key={resetTrigger}
         onWrongGuess={handleWrongGuess}
         onCorrectGuess={handleWinner}
         gameOver={gameOver}
+        resetTrigger={resetTrigger}
       />
 
       <div className={"flex justify-center items-center flex-col"}>
@@ -205,6 +223,7 @@ function App() {
             className={
               "mx-auto bg-green-500 text-3xl px-1.5 rounded-md hover:scale-105 duration-200"
             }
+            onClick={resetGame}
           >
             New Game
           </button>

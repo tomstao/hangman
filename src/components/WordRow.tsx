@@ -1,8 +1,8 @@
 import Cell from "./Cell.tsx";
-import {nanoid} from "nanoid";
+import { nanoid } from "nanoid";
 import axios from "axios";
 import * as React from "react";
-import {useEffect, useState} from "react";
+import { useEffect, useState, useRef } from "react";
 import Alphabet from "./Alphabet.tsx";
 
 export interface Hangman {
@@ -16,10 +16,12 @@ export default function WordRow({
   onWrongGuess,
   onCorrectGuess,
   gameOver,
+  resetTrigger,
 }: {
   onWrongGuess: () => void;
   onCorrectGuess: () => void;
   gameOver: boolean;
+  resetTrigger?: number;
 }) {
   const alphabet = Array.from({ length: 26 }, (_, i) =>
     String.fromCharCode(97 + i)
@@ -32,8 +34,20 @@ export default function WordRow({
     }));
   };
 
+  const [word, setWord] = useState<Hangman[]>(hangmanProcess("loading."));
+  const [alphabets, setAlphabets] = useState<Hangman[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const gameOverRef = useRef(gameOver);
+
+  // Update ref when gameOver changes
+  useEffect(() => {
+    gameOverRef.current = gameOver;
+  }, [gameOver]);
+
   const handleAlphalKeys = (e: React.MouseEvent<HTMLElement>) => {
-    if (gameOver) {
+    console.log("handleAlphalKeys called, gameOver:", gameOverRef.current);
+    if (gameOverRef.current) {
+      console.log("Game is over, returning early");
       return;
     }
     console.log(word);
@@ -42,28 +56,66 @@ export default function WordRow({
     let correctGuess = false;
 
     setWord((prev) => {
-        return prev.map((key) => {
-          if (key.char.toUpperCase() === value) {
-              correctGuess = true;
-              return {...key, display: true};
-          }
-          return key;
+      const updatedWord = prev.map((key) => {
+        if (key.char.toUpperCase() === value) {
+          correctGuess = true;
+          return { ...key, display: true };
+        }
+        return key;
       });
-    });
 
-    if (!correctGuess) {
-      onWrongGuess(); // ✅ Call this from App
-    }
+      // Check win condition immediately after updating
+      const allRevealed = updatedWord.every((w) => w.display);
+      if (allRevealed) {
+        // If user won, don't call onWrongGuess
+        setTimeout(() => onCorrectGuess(), 0);
+        return updatedWord;
+      }
+
+      // Only call onWrongGuess if user didn't win
+      if (!correctGuess) {
+        setTimeout(() => onWrongGuess(), 0);
+      }
+
+      return updatedWord;
+    });
   };
 
-  const [word, setWord] = useState<Hangman[]>(hangmanProcess("loading."));
-  const alphabets: Hangman[] = hangmanProcess(alphabet.join("")).map(
-    (word) => ({
+  // Update alphabets when gameOver changes
+  useEffect(() => {
+    console.log("Updating alphabets, gameOver:", gameOver);
+    const newAlphabets = hangmanProcess(alphabet.join("")).map((word) => ({
       ...word,
       onClick: handleAlphalKeys,
-    })
-  );
-  const [error, setError] = useState<string | null>(null);
+    }));
+    setAlphabets(newAlphabets);
+  }, [gameOver]);
+
+  const fetchNewWord = async () => {
+    try {
+      const res = await axios.get(
+        "https://random-word-api.vercel.app/api?words=1&length=8&type=uppercase"
+      );
+      console.log(res.data);
+      setWord(
+        hangmanProcess(res.data[0]).map((char) => ({
+          ...char,
+          display: false,
+        }))
+      );
+      console.log(word);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        if (err.response) {
+          setError(`Error ${err.response.status}: ${err.response.statusText}`);
+        } else {
+          setError(err.message);
+        }
+      } else {
+        setError("An unknown error occurred");
+      }
+    }
+  };
 
   // Add useEffect to check win condition whenever word changes
   useEffect(() => {
@@ -77,35 +129,8 @@ export default function WordRow({
   }, [word, gameOver, onCorrectGuess]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(
-          "https://random-word-api.vercel.app/api?words=1&length=8&type=uppercase"
-        );
-        setWord(
-          hangmanProcess(res.data[0]).map((char) => ({
-            ...char,
-            display: false,
-          }))
-        );
-        console.log(word);
-      } catch (err: unknown) {
-        if (axios.isAxiosError(err)) {
-          if (err.response) {
-            setError(
-              `Error ${err.response.status}: ${err.response.statusText}`
-            );
-          } else {
-            setError(err.message);
-          }
-        } else {
-          setError("An unknown error occurred");
-        }
-      }
-    };
-
-    fetchData();
-  }, []);
+    fetchNewWord();
+  }, [resetTrigger]);
 
   if (error) {
     console.error(error);
